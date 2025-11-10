@@ -7,18 +7,8 @@ namespace BRL
     {
         public List<string> GetImporters()
         {
-            var folder = "reflection";
+            var folder = "C:\\Users\\Carlos\\Desktop\\pac-2-CarlosGarreta\\BackApi\\BackApi\\reflection";
 
-            if (!Path.IsPathRooted(folder))
-            {
-                folder = Path.Combine(AppContext.BaseDirectory, folder.TrimStart('/', '\\'));
-            }
-
-            if (Directory.Exists(folder))
-            {
-                Console.WriteLine($"Plugin folder not found: {folder}");
-                return [];
-            }
 
             var dllFiles = Directory.GetFiles(folder, "*.dll");
 
@@ -31,7 +21,7 @@ namespace BRL
                     var assembly = Assembly.LoadFrom(dll);
 
                     var types = assembly.GetTypes()
-                        .Where(t => typeof(ImporterInterface).IsAssignableFrom(t) && !t.IsPublic && !t.IsAbstract);
+                        .Where(t => typeof(ImporterInterface).IsAssignableFrom(t) && t.IsPublic && !t.IsAbstract);
 
                     foreach (var type in types)
                     {
