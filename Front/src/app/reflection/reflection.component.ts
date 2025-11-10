@@ -1,49 +1,47 @@
-import { Component } from '@angular/core';
+import { Component, signal, OnInit  } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { CounterService } from './counter.service';
 
 @Component({
   selector: 'app-reflection',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './reflection.component.html',
-  styleUrl: './reflection.component.css'
+  styleUrls: ['./reflection.component.css']
 })
-export class ReflectionComponent {
-  private apiUrl = 'https://localhost:7152/';
+export class ReflectionComponent implements OnInit {
+  private apiUrl = 'https://localhost:7152/api/Reflection/importers';
     
-  list = []
-
-  movies = signal<Movie[]>([]);
   isLoading = signal(false);
+  names = signal<string[]>([]);
   error = signal<string | null>(null);
+  emptyList = signal(false);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, public counter: CounterService) {}
+  ngOnInit(): void {
+    this.counter.increment();
+  }
 
-  loadPopularMovies(page: number = 1) {
+  cargarNombres() {
     this.isLoading.set(true);
     this.error.set(null);
-
-    const params = new HttpParams()
-      .set('api_key', this.apiKey)
-      .set('language', 'en-US')
-      .set('page', page.toString());
+    this.emptyList.set(false);
 
     this.http
-      .get<{ results: Movie[] }>(`${this.apiUrl}/movie/popular`, { params })
+      .get<string[]>(this.apiUrl)
       .subscribe({
         next: (response) => {
-          const mappedMovies = response.results.map((m) => ({
-            ...m,
-            poster_path: m.poster_path
-              ? `${this.imageBaseUrl}${m.poster_path}`
-              : 'assets/no-poster.png',
-          }));
-
-          this.movies.set(mappedMovies);
+          const results = response;
+          this.names.set(results);
           this.isLoading.set(false);
+          if (results.length == 0)
+            this.emptyList.set(true);
         },
-        error: (err) => {
-          console.error('Error fetching movies:', err);
-          this.error.set('Failed to load movies');
+        error: () => {
+          this.error.set("error");
           this.isLoading.set(false);
         },
       });
+  }
 }

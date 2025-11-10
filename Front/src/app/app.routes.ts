@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 
-import { reflectionComponent } from './reflection/reflection.component';
+import { ReflectionComponent } from './reflection/reflection.component';
 
 export const routes: Routes = [
   {
     path: 'reflection',
-    component: reflectionComponent
+    component: ReflectionComponent
   }
 ];
