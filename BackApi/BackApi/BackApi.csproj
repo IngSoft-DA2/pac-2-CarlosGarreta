@@ -12,10 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\APIServiceFactory\APIServiceFactory.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="reflection\" />
+    <ProjectReference Include="..\BRL\BRL.csproj" />
   </ItemGroup>
 
 </Project>
